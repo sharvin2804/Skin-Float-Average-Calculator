@@ -74,7 +74,7 @@
                         if (activeTabId && updatedItems[activeTabId]) {
                             const result = updatedItems[activeTabId];
                             const successMessage = `Found ${result.count} potential elements. Successfully parsed ${result.count} floats.\nAverage: ${result.average.toFixed(6)}`;
-                            console.log("[Popup] Calculation Success:", successMessage);
+                            console.log(successMessage);
                             calculationInfoContainer.classList.remove('error');
                         } else if (Object.keys(updatedItems).length === 0) {
                             calculationInfoContainer.textContent = "No results stored yet.";
@@ -189,6 +189,8 @@
 
             // --- Clear All Button Listener ---
             if (clearAllButton) {
+                clearAllButton.textContent = "Clear All"; // Change button text
+
                 clearAllButton.addEventListener("click", () => {
                     chrome.storage.local.clear(() => {
                         if (chrome.runtime.lastError) {
