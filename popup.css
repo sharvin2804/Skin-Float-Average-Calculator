@@ -16,6 +16,7 @@ html {
 
 body {
     width: 400px;
+    position: relative; /* Make body a positioning context for absolute elements within */
 }
 
 #app {
@@ -122,6 +123,13 @@ footer {
     font-size: 12px;
 }
 
-
+#version-display {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    font-size: 0.8em;
+    color: #777; /* Adjust color as needed */
+    z-index: 10; /* Ensure it's above other elements if needed */
+}
 
 /*# sourceMappingURL=popup.css.map*/

@@ -17,7 +17,27 @@
             const clearAllButton = document.getElementById("clear-all-button");
             const resultsContainer = document.getElementById("results-container");
             const calculationInfoContainer = document.getElementById("calculation-info");
+            const versionDisplay = document.getElementById("version-display");
+            const versionNumberSpan = document.getElementById("version-number"); // Get the span
             let activeTabId = null;
+
+            // Function to get the extension's version from the manifest
+            async function getExtensionVersion() {
+                try {
+                    const manifest = chrome.runtime.getManifest();
+                    return manifest.version;
+                } catch (error) {
+                    console.error("Error getting manifest:", error);
+                    return "N/A";
+                }
+            }
+
+            // Display the version number
+            getExtensionVersion().then(version => {
+                if (versionNumberSpan) {
+                    versionNumberSpan.textContent = version; // Update the span's text
+                }
+            });
 
             async function getTabTitle(tabId) {
                 try {
