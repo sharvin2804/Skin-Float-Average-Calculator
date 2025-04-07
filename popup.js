@@ -18,7 +18,9 @@
             const resultsContainer = document.getElementById("results-container");
             const calculationInfoContainer = document.getElementById("calculation-info");
             const versionDisplay = document.getElementById("version-display");
-            const versionNumberSpan = document.getElementById("version-number"); // Get the span
+            const versionNumberSpan = document.getElementById("version-number");
+            const darkModeCheckbox = document.getElementById("darkModeCheckbox");
+            const body = document.body;
             let activeTabId = null;
 
             // Function to get the extension's version from the manifest
@@ -35,8 +37,23 @@
             // Display the version number
             getExtensionVersion().then(version => {
                 if (versionNumberSpan) {
-                    versionNumberSpan.textContent = version; // Update the span's text
+                    versionNumberSpan.textContent = version;
                 }
+            });
+
+            // Load dark mode preference from storage
+            chrome.storage.local.get('darkMode', (data) => {
+                const isDarkMode = data.darkMode;
+                if (isDarkMode) {
+                    body.classList.add('dark-mode');
+                    darkModeCheckbox.checked = true;
+                }
+            });
+
+            // Listen for dark mode toggle changes
+            darkModeCheckbox.addEventListener('change', () => {
+                body.classList.toggle('dark-mode');
+                chrome.storage.local.set({ darkMode: darkModeCheckbox.checked });
             });
 
             async function getTabTitle(tabId) {

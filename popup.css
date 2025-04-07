@@ -27,6 +27,7 @@ body {
     flex-direction: column;
     text-align: center;
     padding: 20px;
+    position: relative; /* Make #app a positioning context */
 }
 
 
@@ -130,6 +131,136 @@ footer {
     font-size: 0.8em;
     color: #777; /* Adjust color as needed */
     z-index: 10; /* Ensure it's above other elements if needed */
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #333;
+    color: #eee;
+}
+
+body.dark-mode #title {
+    color: #eee;
+}
+
+body.dark-mode #results-container h2 {
+    color: #eee;
+}
+
+body.dark-mode #results-list li {
+    color: #ddd;
+    border-color: #555;
+}
+
+body.dark-mode #calculation-info.error {
+    color: #ffdddd;
+    background-color: #5c0007;
+    border-color: #ffdddd;
+}
+
+body.dark-mode #calculation-info.success {
+    color: #b8ffc4;
+    background-color: #1b4724;
+    border-color: #b8ffc4;
+}
+
+body.dark-mode #calculation-info.info {
+    color: #cce5ff;
+    background-color: #002747;
+    border-color: #cce5ff;
+}
+
+body.dark-mode footer p {
+    color: #aaa;
+}
+
+body.dark-mode footer a {
+    color: #80cfff;
+}
+
+/* Toggle Switch Styles */
+#dark-mode-toggle {
+    position: absolute;
+    top: 10px; /* Adjust top spacing as needed */
+    right: 10px; /* Adjust right spacing as needed */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 20; /* Ensure it's above other elements if needed */
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px; /* Make it wider to accommodate icons */
+    height: 28px; /* Adjust height if needed */
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 28px; /* Make background rounded */
+}
+
+.slider:before {
+    position: absolute;
+    content: "\2600"; /* Unicode for a white sun ☀️ (default state - light mode) */
+    color: #fdd835; /* Sun color */
+    background-color: #fff; /* Light background for sun */
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    transition: .4s;
+    border-radius: 50%; /* Keep it round */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px; /* Size of the icon */
+    line-height: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); /* Optional shadow for sun */
+}
+
+input:checked + .slider {
+    background-color: #4a4a4a; /* Darker background when checked (dark mode) */
+}
+
+input:checked + .slider:before {
+    transform: translateX(32px); /* Adjust based on width */
+    content: "\263D"; /* Unicode for a crescent moon ☽ (checked state - dark mode) */
+    color: #eee; /* Moon color */
+    background-color: #333; /* Dark background for moon */
+    border-radius: 50%; /* Ensure round for moon */
+    box-shadow: none; /* Remove shadow for moon */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+/* Rounded sliders (for the background) */
+.slider.round {
+    border-radius: 28px;
+}
+
+.slider.round:before {
+    border-radius: 50%; /* Initially round for transition */
+}
+
+.toggle-label {
+    font-size: 0.9em;
 }
 
 /*# sourceMappingURL=popup.css.map*/
