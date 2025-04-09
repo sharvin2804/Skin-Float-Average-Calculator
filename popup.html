@@ -5,6 +5,187 @@
     <title>Skin Float Average Calculator</title>
     <link rel="stylesheet" href="popup.css" />
     <style>
+        /* normalize css starts here */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* normalize css ends here */
+
+
+        html {
+            font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif;
+            color: #222;
+        }
+
+        body {
+            width: 400px;
+            position: relative; /* Make body a positioning context for absolute elements within */
+        }
+
+        #app {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            position: relative; /* Make #app a positioning context */
+        }
+
+
+        #title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        #result {
+            font-size: 36px;
+            font-weight: 700;
+        }
+
+        #result-container {
+            padding: 5px 30px;
+            border-radius: 4px;
+            border: 0;
+        }
+
+        .error {
+            color: #D8000C; /* Red */
+            background-color: #FFD2D2; /* Light red */
+            border: 1px solid #D8000C;
+        }
+
+        .success {
+            color: #2f6e3f; /* Dark Green */
+            background-color: #d2ffdd; /* Light green */
+            border: 1px solid #2f6e3f;
+        }
+
+        .info {
+            color: #00529B; /* Blue */
+            background-color: #BDE5F8; /* Light blue */
+            border: 1px solid #00529B;
+        }
+
+        #clear-all-button {
+            background-color: #f44336; /* Red background */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        #clear-all-button:hover {
+            background-color: #d32f2f; /* Darker red on hover */
+        }
+
+        #button-container {
+            display: flex;
+            gap: 10px; /* Space between buttons */
+            margin-top: 15px;
+        }
+        #button {
+            border: 0;
+            display: inline-block;
+            padding: 10px 20px;
+            margin-right: 4px;
+            margin-left: 4px;
+            background-color: bisque;
+            color: orangered;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: transform .2s ease;
+            user-select: none;
+        }
+
+        #button:focus {
+            outline: none;
+        }
+
+        #button:hover {
+            transform: scale(1.1);
+        }
+
+        #button:disabled {
+            color: grey;
+            background-color: lightgrey;
+            cursor: not-allowed;
+        }
+
+        footer {
+            margin-top: 30px;
+        }
+
+        #footnote {
+            font-size: 12px;
+        }
+
+        #version-display {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            font-size: 0.8em;
+            color: #777; /* Adjust color as needed */
+            z-index: 10; /* Ensure it's above other elements if needed */
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #333;
+            color: #eee;
+        }
+
+        body.dark-mode #title {
+            color: #eee;
+        }
+
+        body.dark-mode #results-container h2 {
+            color: #eee;
+        }
+
+        body.dark-mode #results-list li {
+            color: #ddd;
+            border-color: #555;
+        }
+
+        body.dark-mode #calculation-info.error {
+            color: #ffdddd;
+            background-color: #5c0007;
+            border-color: #ffdddd;
+        }
+
+        body.dark-mode #calculation-info.success {
+            color: #b8ffc4;
+            background-color: #1b4724;
+            border-color: #b8ffc4;
+        }
+
+        body.dark-mode #calculation-info.info {
+            color: #cce5ff;
+            background-color: #002747;
+            border-color: #cce5ff;
+        }
+
+        body.dark-mode footer p {
+            color: #aaa;
+        }
+
+        body.dark-mode footer a {
+            color: #80cfff;
+        }
+
+        /* Settings Container Styles */
         #settings-container {
             display: none; /* Initially hidden */
             margin-top: 15px;
@@ -13,11 +194,17 @@
         }
         .setting-item {
             margin-bottom: 10px;
+            display: flex;
+            align-items: center; /* Initial vertical centering */
+            justify-content: flex-start;
+            gap: 15px;
         }
         label {
             display: block;
-            margin-bottom: 5px;
             font-weight: bold;
+            text-align: left;
+            flex-shrink: 0;
+            line-height: 30px; /* Adjust line height to match the new slider height */
         }
         select, input[type="checkbox"] {
             width: 100%;
@@ -25,73 +212,150 @@
             margin-bottom: 10px;
             box-sizing: border-box;
         }
-        .theme-options {
-            display: flex;
-            gap: 10px;
-            align-items: center;
+
+        /* Rebuilt Dark Mode Switch Styles (Bigger) */
+        .theme-switch-container {
+            display: inline-block;
+            align-self: center;
+            margin-top: -2px; /* Adjust for vertical alignment with bigger slider */
         }
+
+        .theme-switch-input {
+            height: 0;
+            width: 0;
+            visibility: hidden;
+        }
+
+        .theme-switch-label {
+            display: inline-block;
+            width: 60px; /* Increased width of the track */
+            height: 30px; /* Increased height of the track */
+            border-radius: 15px; /* Adjust border-radius for the new height */
+            background-color: #ccc;
+            cursor: pointer;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .theme-switch-track {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            border-radius: inherit;
+        }
+
+        .theme-switch-thumb {
+            position: absolute;
+            top: 4px; /* Adjust top for the new height */
+            left: 4px; /* Adjust left for the new height */
+            width: 22px; /* Increased width of the thumb */
+            height: 22px; /* Increased height of the thumb */
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px; /* Adjust font size if needed */
+            color: #555;
+        }
+
+        .theme-switch-thumb::before {
+            content: "🌙";
+        }
+
+        .theme-switch-input:checked + .theme-switch-label {
+            background-color: #4a4a4a; /* Dark background */
+        }
+
+        .theme-switch-input:checked + .theme-switch-label .theme-switch-thumb {
+            transform: translateX(30px); /* Adjust translateX for the new width */
+            color: #eee;
+        }
+
+        .theme-switch-input:checked + .theme-switch-label .theme-switch-thumb::before {
+            content: "☀️"; /* Changed to sun for dark mode active */
+        }
+
         #toggle-settings {
             margin-top: 10px;
             padding: 8px 15px;
             cursor: pointer;
         }
+
+        #logo-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        #logo {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+        }
+
     </style>
 </head>
 <body>
-  <div id="app">
-    <div id="version-display">Version: <span id="version-number"></span></div>
-    <div id="logo-container">
-      <img src="/icons/icon_32.png" alt="logo" id="logo">
-      <h1 id="title">Skin Float Average Calculator</h1>
-    </div>
-    <div id="calculation-info"></div>
-    <div id="results-container">
-      <h2>Stored Results:</h2>
-      <div id="results-list">
+    <div id="app">
+        <div id="version-display">Version: <span id="version-number"></span></div>
+        <div id="logo-container">
+            <img src="/icons/icon_32.png" alt="logo" id="logo">
+            <h1 id="title">Skin Float Average Calculator</h1>
         </div>
-    </div>
-    <div id="button-container">
-      <button id="button">Calculate</button>
-      <button id="clear-all-button">Clear All</button>
-    </div>
-
-    <button id="toggle-settings">Settings</button>
-
-    <div id="settings-container">
-        <h3>Settings</h3>
-        <div class="setting-item">
-            <label for="decimalPlaces">Decimal Places:</label>
-            <select id="decimalPlaces">
-                <option value="2">2</option>
-                <option value="4">4</option>
-                <option value="6" selected>6</option>
-                <option value="8">8</option>
-            </select>
-        </div>
-
-        <div class="setting-item">
-            <label for="autoCalculate">Automatically Calculate on Page Load:</label>
-            <input type="checkbox" id="autoCalculate">
-        </div>
-
-        <div class="setting-item">
-            <label>Theme:</label>
-            <div class="theme-options">
-                <input type="radio" id="lightMode" name="theme" value="light">
-                <label for="lightMode">Light</label>
-                <input type="radio" id="darkMode" name="theme" value="dark">
-                <label for="darkMode">Dark</label>
+        <div id="calculation-info"></div>
+        <div id="results-container">
+            <h2>Stored Results:</h2>
+            <div id="results-list">
             </div>
         </div>
-        <button id="saveSettings">Save Settings</button>
+        <div id="button-container">
+            <button id="button">Calculate</button>
+            <button id="clear-all-button">Clear All</button>
+        </div>
+
+        <button id="toggle-settings">Settings</button>
+
+        <div id="settings-container">
+            <h3>Settings</h3>
+            <div class="setting-item">
+                <label>Theme:</label>
+                <div class="theme-switch-container">
+                    <input type="checkbox" id="darkModeCheckbox" class="theme-switch-input">
+                    <label class="theme-switch-label" for="darkModeCheckbox">
+                        <span class="theme-switch-track">
+                            <span class="theme-switch-thumb"></span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="setting-item">
+                <label for="decimalPlaces">Decimal Places:</label>
+                <select id="decimalPlaces">
+                    <option value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="6" selected>6</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+
+            <div class="setting-item">
+                <label for="autoCalculate">Automatically Calculate on Page Load:</label>
+                <input type="checkbox" id="autoCalculate">
+            </div>
+            <button id="saveSettings">Save Settings</button>
+        </div>
+
+        <footer>
+            <p id="footnote">Supported sites: <a href="https://csfloat.com">csfloat.com</a> &amp; <a href="https://skinport.com">skinport.com</a></p>
+        </footer>
     </div>
 
-    <footer>
-      <p id="footnote">Supported sites: <a href="https://csfloat.com">csfloat.com</a> &amp; <a href="https://skinport.com">skinport.com</a></p>
-    </footer>
-  </div>
-
-  <script src="popup.js"></script>
+    <script src="popup.js"></script>
 
 </body>
 </html>

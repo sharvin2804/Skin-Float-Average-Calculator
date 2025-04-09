@@ -30,6 +30,6 @@
   "host_permissions": [
     "*://*.skinport.com/*",
     "*://*.csfloat.com/*"
-  ],
-  "options_page": "settings.html"
+  ]
 }
+

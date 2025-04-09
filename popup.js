@@ -23,8 +23,7 @@
             const settingsContainer = document.getElementById("settings-container");
             const decimalPlacesSelect = document.getElementById('decimalPlaces');
             const autoCalculateCheckbox = document.getElementById('autoCalculate');
-            const lightModeRadio = document.getElementById('lightMode');
-            const darkModeRadio = document.getElementById('darkMode');
+            const darkModeCheckbox = document.getElementById('darkModeCheckbox'); // Get the dark mode checkbox
             const saveSettingsButton = document.getElementById('saveSettings');
             const body = document.body;
             let activeTabId = null;
@@ -57,10 +56,10 @@
 
                 if (theme === 'dark') {
                     body.classList.add('dark-mode');
-                    darkModeRadio.checked = true;
+                    darkModeCheckbox.checked = true;
                 } else {
                     body.classList.remove('dark-mode');
-                    lightModeRadio.checked = true;
+                    darkModeCheckbox.checked = false;
                 }
                 decimalPlacesSelect.value = decimalPlaces.toString();
                 autoCalculateCheckbox.checked = autoCalculate;
@@ -276,24 +275,32 @@
             saveSettingsButton.addEventListener('click', () => {
                 const selectedDecimalPlaces = parseInt(decimalPlacesSelect.value);
                 const autoCalcEnabled = autoCalculateCheckbox.checked;
-                const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+                const darkModeEnabled = document.getElementById('darkModeCheckbox').checked; // Get the state of the checkbox
+                const selectedTheme = darkModeEnabled ? 'dark' : 'light'; // Determine the theme based on the checkbox state
 
                 chrome.storage.sync.set({
                     decimalPlaces: selectedDecimalPlaces,
                     autoCalculate: autoCalcEnabled,
                     theme: selectedTheme
                 }, () => {
-                    decimalPlaces = selectedDecimalPlaces; // Update local variable
-                    if (selectedTheme === 'dark') {
-                        body.classList.add('dark-mode');
+                    if (chrome.runtime.lastError) {
+                        console.error("Error saving settings:", chrome.runtime.lastError);
+                        calculationInfoContainer.textContent = "Error saving settings.";
+                        calculationInfoContainer.classList.add('error');
                     } else {
-                        body.classList.remove('dark-mode');
+                        decimalPlaces = selectedDecimalPlaces; // Update local variable
+                        if (selectedTheme === 'dark') {
+                            body.classList.add('dark-mode');
+                        } else {
+                            body.classList.remove('dark-mode');
+                        }
+                        displayStoredResults(storedDataCache); // Re-render with new decimal places
+                        calculationInfoContainer.textContent = "Settings saved!";
+                        calculationInfoContainer.classList.remove('error'); // Ensure error class is removed
+                        setTimeout(() => {
+                            calculationInfoContainer.textContent = "";
+                        }, 1500);
                     }
-                    displayStoredResults(storedDataCache); // Re-render with new decimal places
-                    calculationInfoContainer.textContent = "Settings saved!";
-                    setTimeout(() => {
-                        calculationInfoContainer.textContent = "";
-                    }, 1500);
                 });
             });
 
