@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed: Bug Z that caused issue A.
 - Removed: Feature W that was deprecated.
 
+## [0.1.2] - 2025-04-09
+- Added: Version Numbering
+- Added: Dark Mode Toggle
+- Acknowledged: Bug where sometimes doesn't calculate. Temporary Fix: press Clear All
+
 ## [0.1.1] - 2025-04-07
 - Added: Storing and displaying past results.
 - Added: Clear all results functionality.

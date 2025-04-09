@@ -19,9 +19,10 @@
             const calculationInfoContainer = document.getElementById("calculation-info");
             const versionDisplay = document.getElementById("version-display");
             const versionNumberSpan = document.getElementById("version-number");
-            const darkModeCheckbox = document.getElementById("darkModeCheckbox");
+            const openSettingsButton = document.getElementById("openSettings");
             const body = document.body;
             let activeTabId = null;
+            let decimalPlaces = 6; // Default value
 
             // Function to get the extension's version from the manifest
             async function getExtensionVersion() {
@@ -41,19 +42,15 @@
                 }
             });
 
-            // Load dark mode preference from storage
-            chrome.storage.local.get('darkMode', (data) => {
-                const isDarkMode = data.darkMode;
-                if (isDarkMode) {
+            // Load theme and decimal places from storage
+            chrome.storage.sync.get(['theme', 'decimalPlaces'], (settings) => {
+                const theme = settings.theme || 'light';
+                decimalPlaces = settings.decimalPlaces === undefined ? 6 : parseInt(settings.decimalPlaces);
+                if (theme === 'dark') {
                     body.classList.add('dark-mode');
-                    darkModeCheckbox.checked = true;
+                } else {
+                    body.classList.remove('dark-mode');
                 }
-            });
-
-            // Listen for dark mode toggle changes
-            darkModeCheckbox.addEventListener('change', () => {
-                body.classList.toggle('dark-mode');
-                chrome.storage.local.set({ darkMode: darkModeCheckbox.checked });
             });
 
             async function getTabTitle(tabId) {
@@ -81,7 +78,7 @@
                         const data = storedData[tabId];
                         const listItem = document.createElement('li');
                         const tabTitle = data.title ? data.title : `Tab ${tabId}`;
-                        listItem.textContent = `${tabTitle}: Average ${data.average.toFixed(6)} (${data.count} items)`;
+                        listItem.textContent = `${tabTitle}: Average ${data.average !== undefined ? data.average.toFixed(decimalPlaces) : 'N/A'} (${data.count} items)`;
                         resultsList.appendChild(listItem);
                     }
                 }
@@ -89,31 +86,29 @@
             }
 
             // Load stored results when the popup opens
-            chrome.storage.local.get(null, (items) => {
-                if (chrome.runtime.lastError) {
-                    console.error("Error retrieving data from storage:", chrome.runtime.lastError);
-                    const errorMessage = document.createElement('p');
-                    errorMessage.classList.add('error');
-                    errorMessage.textContent = "Error loading stored results.";
-                    resultsContainer.appendChild(errorMessage);
-                } else {
-                    displayStoredResults(items);
-                }
-            });
+            chrome.storage.local.get(null, displayStoredResults);
 
             // Listen for the "refreshStoredResults" message from the background script
             chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 if (request.action === "refreshStoredResults") {
                     console.log("[Popup] Received refresh request, reloading stored results.");
-                    chrome.storage.local.get(null, (updatedItems) => {
-                        displayStoredResults(updatedItems);
-                        // Update the status message only if there are results for the current tab
-                        if (activeTabId && updatedItems[activeTabId]) {
-                            const result = updatedItems[activeTabId];
-                            const successMessage = `Found ${result.count} potential elements. Successfully parsed ${result.count} floats.\nAverage: ${result.average.toFixed(6)}`;
-                            console.log(successMessage);
-                            calculationInfoContainer.classList.remove('error');
-                        } else if (Object.keys(updatedItems).length === 0) {
+                    chrome.storage.local.get(null, displayStoredResults);
+                    // Update the status message only if there are results for the current tab
+                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                        if (tabs && tabs.length > 0 && tabs[0].id && request.result) {
+                            const currentTabId = tabs[0].id.toString();
+                            if (request.result.average !== undefined && request.result.count !== undefined) {
+                                const successMessage = `Found ${request.result.count} potential elements. Successfully parsed ${request.result.count} floats.\nAverage: ${request.result.average.toFixed(decimalPlaces)}`;
+                                console.log(successMessage);
+                                calculationInfoContainer.classList.remove('error');
+                                calculationInfoContainer.textContent = successMessage;
+                            } else if (request.error) {
+                                calculationInfoContainer.textContent = request.error;
+                                calculationInfoContainer.classList.add('error');
+                            } else {
+                                calculationInfoContainer.textContent = ""; // Clear previous messages
+                            }
+                        } else if (Object.keys(updatedItems).length === 0) { // updatedItems not defined here
                             calculationInfoContainer.textContent = "No results stored yet.";
                         } else {
                             calculationInfoContainer.textContent = ""; // Clear if no result for current tab
@@ -188,13 +183,15 @@
                             if (floats.length === 0) {
                                 return { error: `Found ${totalElementsFound} potential elements, but failed to parse any valid numbers.`, totalElementsFound };
                             }
-                            const result = { average: floats.reduce((sum, val) => sum + val, 0) / floats.length, count: floats.length, totalElementsFound };
+                            const average = floats.reduce((sum, val) => sum + val, 0) / floats.length;
+                            const result = { average: average, count: floats.length, totalElementsFound };
 
                             // Send the message from the content script
                             chrome.runtime.sendMessage({
                                 action: "storeCalculationResult",
                                 average: result.average,
-                                count: result.count
+                                count: result.count,
+                                result: result // Include the result in the message
                             });
 
                             return result; // Optionally return the result to the popup if needed
@@ -212,11 +209,7 @@
 
                         const result = injectionResults[0].result;
 
-                        if (result.error) {
-                            calculationInfoContainer.textContent = result.error;
-                            calculationInfoContainer.classList.add('error');
-                        }
-                        // The success message will be displayed in the refresh listener
+                        // The success/error message is now handled in the refresh listener
                     });
                 } else {
                     calculationInfoContainer.textContent = "Could not identify the active tab.";
@@ -239,11 +232,16 @@
                             calculationInfoContainer.textContent = "Stored results cleared.";
                             calculationInfoContainer.classList.remove('error');
                             // Update the displayed list to be empty
-                            displayStoredResults({});
+                            chrome.storage.local.get(null, displayStoredResults);
                         }
                     });
                 });
             }
+
+            // --- Open Settings Page ---
+            openSettingsButton.addEventListener('click', () => {
+                chrome.runtime.openOptionsPage(); // This will open settings.html if defined in manifest
+            });
 
         })); // --- End of DOMContentLoaded listener ---
 

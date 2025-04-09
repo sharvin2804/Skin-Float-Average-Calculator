@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Skin Float Calculator",
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Calculate the average of skin floats",
   "icons": {
     "16": "icons/icon_16.png",
@@ -24,10 +24,12 @@
   "permissions": [
     "tabs",
     "scripting",
-    "storage"
+    "storage",
+    "sync"
   ],
   "host_permissions": [
     "*://*.skinport.com/*",
     "*://*.csfloat.com/*"
-  ]
+  ],
+  "options_page": "settings.html"
 }

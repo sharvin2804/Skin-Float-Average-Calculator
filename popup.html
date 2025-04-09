@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <title>Skin Float Average Calculator</title>
     <link rel="stylesheet" href="popup.css" />
+    <style>
+        #settings-button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
   <div id="app">
     <div id="version-display">Version: <span id="version-number"></span></div>
-    <div id="dark-mode-toggle">
-      <label class="switch">
-        <input type="checkbox" id="darkModeCheckbox">
-        <span class="slider round"></span>
-      </label>
-      <span class="toggle-label">Dark Mode</span>
-    </div>
     <div id="logo-container">
       <img src="/icons/icon_32.png" alt="logo" id="logo">
       <h1 id="title">Skin Float Average Calculator</h1>
@@ -29,6 +29,7 @@
       <button id="button">Calculate</button>
       <button id="clear-all-button">Clear All</button>
     </div>
+    <button id="openSettings">Settings</button>
     <footer>
       <p id="footnote">Supported sites: <a href="https://csfloat.com">csfloat.com</a> &amp; <a href="https://skinport.com">skinport.com</a></p>
     </footer>
