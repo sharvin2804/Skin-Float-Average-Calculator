@@ -5,7 +5,32 @@
     <title>Skin Float Average Calculator</title>
     <link rel="stylesheet" href="popup.css" />
     <style>
-        #settings-button {
+        #settings-container {
+            display: none; /* Initially hidden */
+            margin-top: 15px;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .setting-item {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input[type="checkbox"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .theme-options {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        #toggle-settings {
             margin-top: 10px;
             padding: 8px 15px;
             cursor: pointer;
@@ -29,7 +54,38 @@
       <button id="button">Calculate</button>
       <button id="clear-all-button">Clear All</button>
     </div>
-    <button id="openSettings">Settings</button>
+
+    <button id="toggle-settings">Settings</button>
+
+    <div id="settings-container">
+        <h3>Settings</h3>
+        <div class="setting-item">
+            <label for="decimalPlaces">Decimal Places:</label>
+            <select id="decimalPlaces">
+                <option value="2">2</option>
+                <option value="4">4</option>
+                <option value="6" selected>6</option>
+                <option value="8">8</option>
+            </select>
+        </div>
+
+        <div class="setting-item">
+            <label for="autoCalculate">Automatically Calculate on Page Load:</label>
+            <input type="checkbox" id="autoCalculate">
+        </div>
+
+        <div class="setting-item">
+            <label>Theme:</label>
+            <div class="theme-options">
+                <input type="radio" id="lightMode" name="theme" value="light">
+                <label for="lightMode">Light</label>
+                <input type="radio" id="darkMode" name="theme" value="dark">
+                <label for="darkMode">Dark</label>
+            </div>
+        </div>
+        <button id="saveSettings">Save Settings</button>
+    </div>
+
     <footer>
       <p id="footnote">Supported sites: <a href="https://csfloat.com">csfloat.com</a> &amp; <a href="https://skinport.com">skinport.com</a></p>
     </footer>
