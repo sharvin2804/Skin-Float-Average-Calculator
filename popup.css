@@ -309,8 +309,41 @@ input[type="checkbox"] {
 
 #toggle-settings {
     margin-top: 10px;
-    padding: 8px 15px;
+    padding: 10px 20px; /* Increased padding for better touch/click area */
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #f9f9f9; /* Light background */
+    color: #333; /* Dark text */
+    font-size: 1em;
     cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+#toggle-settings:hover {
+    background-color: #eee; /* Slightly darker on hover */
+    border-color: #bbb;
+}
+
+#toggle-settings:focus {
+    outline: none; /* Remove default focus outline */
+    border-color: #007bff; /* Highlight on focus (if needed) */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Subtle focus shadow */
+}
+
+body.dark-mode #toggle-settings {
+    border-color: #666;
+    background-color: #444;
+    color: #eee;
+}
+
+body.dark-mode #toggle-settings:hover {
+    background-color: #555;
+    border-color: #777;
+}
+
+body.dark-mode #toggle-settings:focus {
+    border-color: #64b5f6;
+    box-shadow: 0 0 0 0.2rem rgba(100, 181, 246, 0.25);
 }
 
 #saveSettings {
