@@ -189,6 +189,8 @@ body.dark-mode footer a {
     margin-bottom: 10px;
     display: flex;
     align-items: center; /* Initial vertical centering */
+    justify-content: space-between; /* Distribute space between label and control */
+    gap: 15px;
 }
 .setting-item.decimal-places {
     justify-content: flex-end; /* Push content to the right */
@@ -201,8 +203,7 @@ label {
     font-weight: bold;
     text-align: left;
     flex-shrink: 0;
-    line-height: 1em;
-    margin-right: 15px; /* Add some space between label and control */
+    line-height: 30px; /* Adjust line height to match the new slider height */
 }
 select#decimalPlaces {
     width: 80px;
@@ -216,8 +217,8 @@ select#decimalPlaces {
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     background-image: none !important; /* Ensure no background image is used */
-    background-color: transparent !important; /* Ensure no background color is obscuring */
-    /* Additional styles to try and "clip" or hide any remaining visual */
+    /* Set the grayish background color */
+    background-color: #f0f0f0 !important;
     overflow: hidden !important;
     text-overflow: ''; /* Prevent text overflow from showing where arrow was */
     padding-right: 5px !important; /* Further reduce right padding */
@@ -225,7 +226,8 @@ select#decimalPlaces {
 
 body.dark-mode select#decimalPlaces {
     border-color: #666;
-    background-color: #444 !important;
+    /* Set the dark grayish background color */
+    background-color: #555 !important;
     color: #eee;
     appearance: none !important;
     -webkit-appearance: none !important;
