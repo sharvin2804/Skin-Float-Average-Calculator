@@ -11,13 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed: Bug Z that caused issue A.
 - Removed: Feature W that was deprecated.
 
-## [0.1.2] - 2025-04-09
+## [0.1.2] - 2025-04-11
 - Added: Version Numbering
 - Added: Dark Mode Toggle
 - Added: Settings Page
 - Added: Auto-Calculate Feature
 - Added: Decimal Point Customisation
-- Fixed: Bug where sometimes doesn't calculate. Temporary Fix: press Clear All
+- Fixed: Bug where sometimes doesn't calculate.
 
 ## [0.1.1] - 2025-04-07
 - Added: Storing and displaying past results.
