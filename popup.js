@@ -309,6 +309,9 @@
                 storedDataCache = items;
             });
 
+            // Initially hide the settings container
+            settingsContainer.style.display = 'none';
+
         })); // --- End of DOMContentLoaded listener ---
 
     })(); // --- End of main IIFE ---
